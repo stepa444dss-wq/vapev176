@@ -73,12 +73,11 @@ end)
 vape:Remove('AntiStamina')
 run(function()
 	local AntiStamina
-	local originalFunc
-	local oldHook
-	local hookInstalled = false
+	local originalBackup
+	local charConn
 
-	local function setupStaminaHook()
-		if hookInstalled or not getrenv or not hookfunction then return end
+	local function applyInfStamina()
+		if not getrenv or not hookfunction then return end
 		local renv = getrenv()
 		if not renv._G or not renv._G.S_Get then return end
 
@@ -86,30 +85,53 @@ run(function()
 		local original = (debug.getupvalue or getupvalue)(cloned, 1)
 		if typeof(original) ~= 'function' then return end
 
-		originalFunc = original
-
-		local hookFunc = function(...)
-			if AntiStamina and AntiStamina.Enabled then
+		if not originalBackup then
+			local targetFunc = function()
 				return 100, 100
 			end
-			return originalFunc(...)
+			if newcclosure then
+				targetFunc = newcclosure(targetFunc)
+			end
+			originalBackup = hookfunction(original, targetFunc)
 		end
+	end
 
-		if newcclosure then
-			hookFunc = newcclosure(hookFunc)
+	local function restoreStamina()
+		if originalBackup and getrenv and hookfunction then
+			pcall(function()
+				local renv = getrenv()
+				local cloned = renv._G and renv._G.S_Get
+				if cloned then
+					local original = (debug.getupvalue or getupvalue)(cloned, 1)
+					hookfunction(original, originalBackup)
+				end
+			end)
+			originalBackup = nil
 		end
-
-		oldHook = hookfunction(original, hookFunc)
-		hookInstalled = true
 	end
 
 	AntiStamina = vape.Categories.Blatant:CreateModule({
 		Name = 'AntiStamina',
 		Function = function(callback)
 			if callback then
-				if not hookInstalled then
-					setupStaminaHook()
+				applyInfStamina()
+				if charConn then
+					charConn:Disconnect()
+					charConn = nil
 				end
+				charConn = lplr.CharacterAdded:Connect(function()
+					if AntiStamina.Enabled then
+						task.wait(1)
+						applyInfStamina()
+					end
+				end)
+				AntiStamina:Clean(charConn)
+			else
+				if charConn then
+					charConn:Disconnect()
+					charConn = nil
+				end
+				restoreStamina()
 			end
 		end,
 		Tooltip = 'Infinite stamina.'
