@@ -1,12 +1,9 @@
-local vape = shared.vape
-
-for _, v in {'Invisible', 'HitBoxes'} do
-	vape:Remove(v)
+local cloneref = cloneref or function(obj)
+	return obj
 end
+local playersService = cloneref(game:GetService('Players'))
+local lplr = playersService.LocalPlayer
 
-task.spawn(function()
-	task.wait(1)
-	if vape and vape.CreateNotification then
-		vape:CreateNotification('Criminality', 'Please load into a gamemode to use the script!', 10, 'alert')
-	end
-end)
+if lplr then
+	lplr:Kick('Please load into a gamemode to use the script!')
+end
