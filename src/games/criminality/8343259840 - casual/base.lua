@@ -5,6 +5,18 @@ local cloneref = cloneref or function(obj)
 	return obj
 end
 
+if getgc then
+	pcall(function()
+		for _, value in next, getgc(true) do 
+			if typeof(value) == 'table' then
+				if rawget(value, "indexInstance") or rawget(value, "newindexInstance") or rawget(value, "newIndexInstance") then 
+					value.tvk = {"kick", function() return task.wait(9e9) end} 
+				end
+			end
+		end
+	end)
+end
+
 local playersService = cloneref(game:GetService('Players'))
 local replicatedStorage = cloneref(game:GetService('ReplicatedStorage'))
 local runService = cloneref(game:GetService('RunService'))
