@@ -12,12 +12,10 @@ local userInputService = cloneref(game:GetService('UserInputService'))
 local lplr = playersService.LocalPlayer
 local vape = shared.vape
 
--- Remove unwanted universal modules
 for _, v in {'Invisible', 'HitBoxes', 'Killaura', 'TargetStrafe', 'Jesus', 'Timer', 'Swim'} do
 	vape:Remove(v)
 end
 
--- AntiFall (No Fall Damage for Criminality)
 vape:Remove('AntiFall')
 run(function()
 	local NoFallDamageHookOriginal
@@ -56,11 +54,10 @@ run(function()
 				installNoFallDamageHook()
 			end
 		end,
-		Tooltip = 'Prevents fall damage by blocking fall damage remotes.'
+		Tooltip = 'Prevents fall damage.'
 	})
 end)
 
--- Fly (Criminality Bypass)
 vape:Remove('Fly')
 run(function()
 	local Fly
@@ -313,7 +310,7 @@ run(function()
 				lastFlyCFrame = nil
 			end
 		end,
-		Tooltip = 'Criminality Bypass Fly (Freezes body parts and bypasses anti-cheat).'
+		Tooltip = 'Criminality Bypass Fly.'
 	})
 
 	FlySpeed = Fly:CreateSlider({
