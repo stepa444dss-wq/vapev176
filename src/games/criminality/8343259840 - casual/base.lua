@@ -70,6 +70,52 @@ run(function()
 	})
 end)
 
+vape:Remove('AntiStamina')
+run(function()
+	local AntiStamina
+	local originalFunc
+	local oldHook
+	local hookInstalled = false
+
+	local function setupStaminaHook()
+		if hookInstalled or not getrenv or not hookfunction then return end
+		local renv = getrenv()
+		if not renv._G or not renv._G.S_Get then return end
+
+		local cloned = renv._G.S_Get
+		local original = (debug.getupvalue or getupvalue)(cloned, 1)
+		if typeof(original) ~= 'function' then return end
+
+		originalFunc = original
+
+		local hookFunc = function(...)
+			if AntiStamina and AntiStamina.Enabled then
+				return 100, 100
+			end
+			return originalFunc(...)
+		end
+
+		if newcclosure then
+			hookFunc = newcclosure(hookFunc)
+		end
+
+		oldHook = hookfunction(original, hookFunc)
+		hookInstalled = true
+	end
+
+	AntiStamina = vape.Categories.Blatant:CreateModule({
+		Name = 'AntiStamina',
+		Function = function(callback)
+			if callback then
+				if not hookInstalled then
+					setupStaminaHook()
+				end
+			end
+		end,
+		Tooltip = 'Infinite stamina.'
+	})
+end)
+
 vape:Remove('Fly')
 run(function()
 	local Fly
