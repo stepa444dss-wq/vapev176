@@ -1,4 +1,4 @@
-﻿local vape = shared.vape
+local vape = shared.vape
 
 for _, v in {'Invisible', 'HitBoxes'} do
 	vape:Remove(v)

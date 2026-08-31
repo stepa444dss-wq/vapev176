@@ -1,4 +1,4 @@
-﻿do
+do
 	local vapeAssets = {
 		['newvape/assets/new/add.png'] = 'rbxassetid://121642387707174',
 		['newvape/assets/new/aim.png'] = 'rbxassetid://122207028123421',
